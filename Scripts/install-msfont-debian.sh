@@ -14,7 +14,7 @@ fi
 # Check if Pip is installed
 if ! command_exists pip; then
   echo "Pip is not installed. Installing Pip..."
-  su -c "apt-get update && apt-get install -y python-pip"
+  su -c "apt-get update && apt-get install -y python3-pip"
 fi
 
 # Create a virtual environment
