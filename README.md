@@ -24,7 +24,7 @@ Follow these steps to install MSFONT on your Linux system:
 2. **Extract the Archive:**
    - After downloading the release, extract the downloaded file named `MSFONT-Linux.tar.gz` to a directory of your choice using the following command:
      ```bash
-     tar -xzvf MSFONT-x86_64-Linux.tar.gz
+     tar -xzvf MSFONT-Linux.tar.gz
      ```
 
 3. **Navigate to the 'Scripts' Folder:**
