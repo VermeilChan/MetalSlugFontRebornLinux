@@ -4,7 +4,7 @@
 su -c 'apt update && apt upgrade -y'
 
 # Install Python and pip
-su -c 'apt install -y python3 python3-pip python3-venv'
+su -c 'apt install -y python3 python3-pip python3-venv python3-tk'
 
 # Create a virtual environment
 python3 -m venv msfont
