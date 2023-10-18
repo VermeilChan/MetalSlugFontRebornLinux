@@ -1,39 +1,26 @@
 #!/bin/bash
 
-# Function to check if a command is available
-command_exists() {
-  command -v "$1" >/dev/null 2>&1
-}
+# Update and upgrade the system
+sudo dnf update -y
 
-# Check if Python is installed
-if ! command_exists python; then
-  echo "Python is not installed. Installing Python..."
-  sudo dnf install -y python3
-fi
-
-# Check if Pip is installed
-if ! command_exists pip; then
-  echo "Pip is not installed. Installing Pip..."
-  sudo dnf install -y python-pip
-fi
+# Install Python, pip, venv, and tkinter
+sudo dnf install -y python3 python3-pip python3-venv python3-tkinter
 
 # Create a virtual environment
-echo "Creating a virtual environment..."
-python3 -m venv msfont-env
+python3 -m venv msfont
 
 # Activate the virtual environment
-echo "Activating the virtual environment..."
-source msfont-env/bin/activate
+source msfont/bin/activate
 
-# Install libraries from requirements.txt
-if [ -f "requirements.txt" ]; then
-  echo "Installing libraries from requirements.txt..."
-  pip install -r requirements.txt
-else
-  echo "requirements.txt not found. No libraries installed."
-fi
+# Install packages
+# Use --use-pep517 flag to ensure PEP 517 compatibility
+pip install wheel Pillow
+pip install --use-pep517 ttkthemes
 
 # Deactivate the virtual environment
 deactivate
 
-echo "Script completed."
+# Clean up after installation
+sudo dnf autoremove -y
+
+echo "Python and pip installed, virtual environment created, and libraries installed."
