@@ -11,9 +11,8 @@
 
 Before you begin the installation process, ensure that you have the following prerequisites:
 
-- A Linux-based operating system (e.g., Debian, Ubuntu, Fedora, or Arch)
-- Internet connectivity to download the necessary files
-- Basic knowledge of running commands in a terminal
+- A Linux-based operating system (e.g., Debian, Ubuntu, Fedora, OpenSUSE Tumbleweed, or Arch).
+- Basic knowledge of running commands in a terminal (Optional).
 
 ## Installation Steps
 
@@ -36,25 +35,29 @@ Follow these steps to install MSFONT on your Linux system:
 
 4. **Choose Your Linux Distribution:**
    - Depending on your Linux distribution, select the appropriate installation script from the following options:
-     - For Debian-Based, systems, run:
-       ```bash
-       ./install-msfont-debian.sh
-       ```
      - For Ubuntu, run:
        ```bash
-       ./install-msfont-ubuntu.sh
+       bash install-msfont-ubuntu.sh
+       ```
+     - For Debian, run:
+       ```bash
+       bash install-msfont-debian.sh
        ```
      - For Fedora, run:
        ```bash
-       ./install-msfont-fedora.sh
+       bash install-msfont-fedora.sh
+       ```
+     - For openSUSE Tumbleweed, run:
+       ```bash
+       bash install-msfont-opensuse.sh
        ```
      - For Arch, run:
        ```bash
-       ./install-msfont-arch.sh
+       bash install-msfont-arch.sh
        ```
 
 5. **Run MSFONT:**
    - After running the appropriate installation script, all the necessary dependencies will be installed. Once the installation is complete, you can launch MSFONT by running:
      ```bash
-     ./start-msfont.sh
+     bash start-msfont.sh
      ```
