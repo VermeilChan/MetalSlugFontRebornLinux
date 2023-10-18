@@ -6,6 +6,9 @@ su -c 'apt update && apt upgrade -y'
 # Install Python and pip
 su -c 'apt install -y python3 python3-pip python3-venv python3-tk'
 
+# Install wheel package
+pip install wheel
+
 # Create a virtual environment
 python3 -m venv msfont
 
@@ -13,7 +16,8 @@ python3 -m venv msfont
 source msfont/bin/activate
 
 # Install libraries from requirements.txt
-pip install -r requirements.txt
+# Use --use-pep517 flag to ensure PEP 517 compatibility
+pip install --use-pep517 -r requirements.txt
 
 # Install Pillow and ttkthemes
 pip install Pillow ttkthemes
