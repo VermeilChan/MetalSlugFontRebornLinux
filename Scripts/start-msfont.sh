@@ -5,6 +5,12 @@ file_exists() {
   [ -f "$1" ]
 }
 
+# Activate the virtual environment
+source msfont/bin/activate
+
+# Deactivate the virtual environment
+deactivate
+
 # Ask the user to choose a version
 PS3="Please choose a version (enter the number): "
 options=("Windowed Version" "Console Version")
