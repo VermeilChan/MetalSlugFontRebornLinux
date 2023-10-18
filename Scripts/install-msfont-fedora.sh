@@ -4,7 +4,7 @@
 sudo dnf update -y
 
 # Install Python, pip, venv, and tkinter
-sudo dnf install -y python3 python3-pip python3-venv python3-tkinter
+sudo dnf install -y python3 python3-pip python3-virtualenv python3-tkinter
 
 # Create a virtual environment
 python3 -m venv msfont
