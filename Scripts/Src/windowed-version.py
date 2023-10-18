@@ -67,7 +67,7 @@ def toggle_theme():
 # Create the main window
 root = tk.Tk()
 root.title("Metal Slug Font")
-im = Image.open('Assets/Icon/Raven.ico')
+im = Image.open('Scripts/Assets/Icon/Raven.ico')
 photo = ImageTk.PhotoImage(im)
 root.wm_iconphoto(True, photo)
 
