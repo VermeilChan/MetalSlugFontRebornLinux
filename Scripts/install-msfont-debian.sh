@@ -7,16 +7,19 @@ su -c 'apt update && apt upgrade -y'
 su -c 'apt install -y python3 python3-pip python3-venv'
 
 # Create a virtual environment
-su -c 'python3 -m venv msfont'
+python3 -m venv msfont
 
 # Activate the virtual environment
-su -c 'source msfont/bin/activate'
+source msfont/bin/activate
 
 # Install libraries from requirements.txt
-su -c 'pip install -r requirements.txt'
+pip install -r requirements.txt
+
+# Install Pillow and ttkthemes
+pip install Pillow ttkthemes
 
 # Deactivate the virtual environment
-su -c 'deactivate'
+deactivate
 
 # Clean up after installation
 su -c 'apt autoremove -y'
