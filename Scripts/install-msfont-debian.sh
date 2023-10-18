@@ -3,7 +3,7 @@
 # Update and upgrade the system
 su -c 'apt update && apt upgrade -y'
 
-# Install Python, pip and venv
+# Install Python, pip, venv and tkinter
 su -c 'apt install -y python3 python3-pip python3-venv python3-tk -y'
 
 # Create a virtual environment
