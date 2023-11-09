@@ -23,7 +23,4 @@ pip3 install --use-pep517 ttkthemes
 # Deactivate the virtual environment
 deactivate
 
-# Clean up after installation
-su -c 'zypper clean -a'
-
 echo "Python and pip installed, virtual environment created, and libraries installed."

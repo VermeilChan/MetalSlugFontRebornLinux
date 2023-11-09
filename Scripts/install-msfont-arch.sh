@@ -20,7 +20,4 @@ pip install --use-pep517 ttkthemes
 # Deactivate the virtual environment
 deactivate
 
-# Clean up after installation
-sudo pacman -R $(pacman -Qtdq)
-
 echo "Python and pip installed, virtual environment created, and libraries installed."
