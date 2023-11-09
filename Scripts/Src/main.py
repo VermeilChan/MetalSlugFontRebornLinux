@@ -87,4 +87,3 @@ def generate_image(text, filename, font_paths):
         return (None, f"Error: Invalid value - {str(e)}")
     except Exception as e:
         return (None, f"An unexpected error occurred: {str(e)}")
-    
