@@ -8,11 +8,11 @@ select version in "${options[@]}"; do
   case $REPLY in
     1)
       echo "Running windowed version..."
-      python3 Scripts/Src/windowed-version.py
+      python3 Src/windowed-version.py
       ;;
     2)
       echo "Running console version..."
-      python3 Scripts/Src/console-version.py
+      python3 Src/console-version.py
       ;;
     *)
       echo "Invalid option. Please select 1 for Windowed Version or 2 for Console Version."
