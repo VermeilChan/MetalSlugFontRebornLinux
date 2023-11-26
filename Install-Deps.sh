@@ -23,10 +23,10 @@ esac
 
 case $package_manager in
     apt | dnf | pacman)
-        sudo $package_manager install -y python3 python3-pip python3-venv
+        sudo $package_manager install -y python3 python3-pip python3-venv libxcb-cursor0
         ;;
     zypper)
-        sudo $package_manager install -y python3 python3-pip python3-virtualenv
+        sudo $package_manager install -y python3 python3-pip python3-virtualenv libxcb-cursor0
         ;;
 esac
 
@@ -38,26 +38,7 @@ pip install -r requirements.txt
 echo "----------------------------------------"
 echo "Process completed successfully!"
 echo "Package manager: $package_manager"
-echo "Python3, pip, and virtualenv installed."
+echo "Python3, pip, virtualenv, and libxcb-cursor0 installed."
 echo "Virtual environment created and activated."
 echo "Packages installed from requirements.txt."
-echo "Virtual environment deactivated."
 echo "----------------------------------------"
-
-echo "Choose a version to run:"
-echo "1. Windowed Version"
-echo "2. Console Version"
-
-read -p "Enter your choice (1 or 2): " choice
-
-case $choice in
-    1)
-        python3 Src/windowed-version.py
-        ;;
-    2)
-        python3 Src/console-version.py
-        ;;
-    *)
-        echo "Invalid choice. Exiting."
-        ;;
-esac
