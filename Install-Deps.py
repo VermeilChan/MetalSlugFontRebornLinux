@@ -14,27 +14,24 @@ def check_sudo():
 
 def run_command(command):
     try:
-        subprocess.run(command, check=True, shell=True)
+        subprocess.run(command, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
         sys.exit(1)
 
 def update_packages(package_manager):
     print(f"Updating packages using {package_manager}...")
-    run_command([f"sudo {package_manager}", "update", "-y"])
+    run_command(["sudo", package_manager, "update", "-y"])
 
 def install_python_pip_venv(package_manager):
     print(f"Installing Python, pip, and venv using {package_manager}...")
-    run_command([f"sudo {package_manager}", "install", "-y", "python3", "python3-pip", "python3-venv"])
+    run_command(["sudo", package_manager, "install", "-y", "python3", "python3-pip"])
 
 def create_virtual_environment():
-    print("Creating virtual environment...")
+    print("Creating and activating virtual environment...")
     run_command(["python3", "-m", "venv", "venv"])
-
-def activate_virtual_environment():
-    print("Activating virtual environment...")
     activate_script = os.path.join("venv", "bin", "activate")
-    run_command([f"source {activate_script}", "&&", "python3"])
+    run_command([activate_script])
 
 def install_packages_from_requirements_txt():
     print("Installing packages from requirements.txt...")
@@ -54,7 +51,6 @@ def main():
     install_python_pip_venv(package_manager)
 
     create_virtual_environment()
-    activate_virtual_environment()
     install_packages_from_requirements_txt()
     deactivate_virtual_environment()
 
