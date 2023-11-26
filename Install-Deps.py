@@ -3,13 +3,17 @@ import sys
 import subprocess
 
 def get_user_input():
-    return input("Enter your package manager (apt/dnf/pacman/zypper): ").lower()
+    valid_package_managers = ["apt", "dnf", "pacman", "zypper"]
+    while True:
+        package_manager = input("Enter your package manager (apt/dnf/pacman/zypper): ").lower()
+        if package_manager in valid_package_managers:
+            return package_manager
+        else:
+            print("Error: Invalid package manager. Please enter a valid one.")
 
 def check_sudo():
-    try:
-        subprocess.run(["sudo", "-v"], check=True)
-    except subprocess.CalledProcessError:
-        print("Error: This script requires sudo privileges.")
+    if os.geteuid() != 0:
+        print("Error: This script requires sudo privileges. Please run with sudo.")
         sys.exit(1)
 
 def run_command(command):
@@ -34,12 +38,15 @@ def create_virtual_environment():
 def activate_virtual_environment():
     print("Activating virtual environment...")
     activate_script = os.path.join("venv", "bin", "activate")
-    command = f"source {activate_script} && exec bash"
-    subprocess.run(["bash", "-c", command])
+    run_command(["source", activate_script])
 
 def install_packages_from_requirements_txt():
+    if not os.path.exists("requirements.txt"):
+        print("Error: requirements.txt file not found.")
+        sys.exit(1)
+
     print("Installing packages from requirements.txt...")
-    run_command(["sudo", "venv/bin/pip", "install", "--no-cache-dir", "-r", "requirements.txt"])
+    run_command(["pip", "install", "-r", "requirements.txt"])
 
 def deactivate_virtual_environment():
     print("Deactivating virtual environment...")
