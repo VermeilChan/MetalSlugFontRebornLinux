@@ -2,6 +2,12 @@
 
 read -p "Enter your package manager (apt/dnf/pacman/zypper): " package_manager
 
+read -p "Do you want to install the dependencies? (y/n): " install_confirmation
+if [ "$install_confirmation" != "y" ]; then
+    echo "Installation canceled by the user. Exiting."
+    exit 0
+fi
+
 case $package_manager in
     apt)
         sudo apt update -y
@@ -21,39 +27,45 @@ case $package_manager in
         ;;
 esac
 
-case $package_manager in
-    apt)
-        sudo apt-get install -y '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
-        ;;
-    dnf)
-        sudo dnf install -y libxcb-devel libX11-devel mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel
-        ;;
-    pacman)
-        sudo pacman -S --noconfirm libxcb libx11 libglu mesa libxrender libxi libxkbcommon libxkbcommon-x11
-        ;;
-    zypper)
-        sudo zypper install -y libxcb-devel libX11-devel Mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel
-        ;;
-esac
+read -p "Do you want to install additional libraries for xcb support? (y/n): " xcb_libraries_confirmation
+if [ "$xcb_libraries_confirmation" == "y" ]; then
+    case $package_manager in
+        apt)
+            sudo apt-get install -y '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
+            ;;
+        dnf)
+            sudo dnf install -y libxcb-devel libX11-devel mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel
+            ;;
+        pacman)
+            sudo pacman -S --noconfirm libxcb libx11 libglu mesa libxrender libxi libxkbcommon libxkbcommon-x11
+            ;;
+        zypper)
+            sudo zypper install -y libxcb-devel libX11-devel Mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel
+            ;;
+    esac
+fi
 
-case $package_manager in
-    apt | pacman)
-        sudo $package_manager install -y python3 python3-pip python3-venv
-        ;;
-    dnf)
-        sudo $package_manager install -y python3 python3-pip
-        ;;
-    zypper)
-        sudo $package_manager install -y python3 python3-pip python3-virtualenv
-        ;;
-esac
+read -p "Do you want to install Python3, pip, and create a virtual environment? (y/n): " python_installation_confirmation
+if [ "$python_installation_confirmation" == "y" ]; then
+    case $package_manager in
+        apt | pacman)
+            sudo $package_manager install -y python3 python3-pip python3-venv
+            ;;
+        dnf)
+            sudo $package_manager install -y python3 python3-pip
+            ;;
+        zypper)
+            sudo $package_manager install -y python3 python3-pip python3-virtualenv
+            ;;
+    esac
 
-python3 -m venv metalslugfontreborn
-source metalslugfontreborn/bin/activate
+    python3 -m venv metalslugfontreborn
+    source metalslugfontreborn/bin/activate
 
-pip install -r requirements.txt
+    pip install -r requirements.txt
 
-deactivate
+    deactivate
+fi
 
 echo "|---------------------------------------------------------------------------|"
 echo "|                                                                           |"
