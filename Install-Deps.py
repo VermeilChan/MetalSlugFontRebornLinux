@@ -34,11 +34,12 @@ def create_virtual_environment():
 def activate_virtual_environment():
     print("Activating virtual environment...")
     activate_script = os.path.join("venv", "bin", "activate")
-    run_command([activate_script])
+    command = f"source {activate_script} && exec bash"
+    subprocess.run(["sudo", "/bin/bash", "-c", command])
 
 def install_packages_from_requirements_txt():
     print("Installing packages from requirements.txt...")
-    run_command(["pip", "install", "--no-cache-dir", "-r", "requirements.txt"])
+    run_command(["sudo", "pip", "install", "--no-cache-dir", "-r", "requirements.txt"])
 
 def deactivate_virtual_environment():
     print("Deactivating virtual environment...")
