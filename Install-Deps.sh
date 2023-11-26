@@ -35,8 +35,6 @@ source metalslugfontreborn/bin/activate
 
 pip install -r requirements.txt
 
-deactivate
-
 echo "----------------------------------------"
 echo "Process completed successfully!"
 echo "Package manager: $package_manager"
