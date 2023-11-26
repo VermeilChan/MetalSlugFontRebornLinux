@@ -3,7 +3,7 @@ import sys
 import subprocess
 
 def get_user_input():
-    return input("Enter your package manager (APT/DNF/PACMAN/ZYPPER): ").upper()
+    return input("Enter your package manager (apt/dnf/pacman/zypper): ").lower()
 
 def check_sudo():
     try:
