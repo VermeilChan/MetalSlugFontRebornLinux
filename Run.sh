@@ -23,7 +23,7 @@ case $choice in
 esac
 
 if [ $? -ne 0 ]; then
-    echo "If the GUI version doesn't work for you, please check the GitHub discussions: https://github.com/NVlabs/instant-ngp/discussions/300"
+    echo "If the GUI version doesn't work for you, please check this GitHub discussions: https://github.com/NVlabs/instant-ngp/discussions/300"
 fi
 
 deactivate
