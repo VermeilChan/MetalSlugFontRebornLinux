@@ -29,12 +29,12 @@ def install_python_pip_venv(package_manager):
 
 def create_virtual_environment():
     print("Creating virtual environment...")
-    run_command(["python3", "-m", "venv", "venv"])
+    run_command(["sudo", "python3", "-m", "venv", "venv"])
 
 def activate_virtual_environment():
     print("Activating virtual environment...")
     activate_script = os.path.join("venv", "bin", "activate")
-    run_command(["source", activate_script])
+    run_command([activate_script])
 
 def install_packages_from_requirements_txt():
     print("Installing packages from requirements.txt...")
