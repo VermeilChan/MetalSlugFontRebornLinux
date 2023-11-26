@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source metalslugfontreborn/bin/activate
+
 echo "Choose a version to run:"
 echo "1. Windowed Version"
 echo "2. Console Version"
@@ -17,3 +19,5 @@ case $choice in
         echo "Invalid choice. Exiting."
         ;;
 esac
+
+deactivate
