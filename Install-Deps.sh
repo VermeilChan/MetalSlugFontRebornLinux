@@ -37,8 +37,11 @@ case $package_manager in
 esac
 
 case $package_manager in
-    apt | dnf | pacman)
+    apt | pacman)
         sudo $package_manager install -y python3 python3-pip python3-venv
+        ;;
+    dnf)
+        sudo $package_manager install -y python3 python3-pip
         ;;
     zypper)
         sudo $package_manager install -y python3 python3-pip python3-virtualenv
