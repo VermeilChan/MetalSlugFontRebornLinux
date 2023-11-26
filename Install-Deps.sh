@@ -4,7 +4,7 @@ read -p "Enter your package manager (apt/dnf/pacman/zypper): " package_manager
 
 case $package_manager in
     apt)
-        sudo apt update && sudo apt upgrade -y
+        sudo apt update -y
         ;;
     dnf)
         sudo dnf update -y
@@ -26,13 +26,13 @@ case $package_manager in
         sudo apt-get install -y '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
         ;;
     dnf)
-        sudo dnf install -y libxcb-devel libX11-xcb-devel mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel
+        sudo dnf install -y libxcb-devel libX11-devel mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel
         ;;
     pacman)
         sudo pacman -S --noconfirm libxcb libx11 libglu mesa libxrender libxi libxkbcommon libxkbcommon-x11
         ;;
     zypper)
-        sudo zypper install -y libxcb-devel libX11-xcb-devel Mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel
+        sudo zypper install -y libxcb-devel libX11-devel Mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel
         ;;
 esac
 
