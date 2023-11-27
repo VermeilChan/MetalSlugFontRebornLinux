@@ -1,12 +1,12 @@
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
-    QApplication, 
-    QMainWindow, QVBoxLayout, 
-    QLabel, 
-    QLineEdit, 
-    QComboBox, 
-    QPushButton, 
-    QWidget, 
+    QApplication,
+    QMainWindow, QVBoxLayout,
+    QLabel,
+    QLineEdit,
+    QComboBox,
+    QPushButton,
+    QWidget,
     QSizePolicy,
     QMessageBox
 )
@@ -18,7 +18,8 @@ from constants import VALID_COLORS_BY_FONT
 from theme import dark_theme
 
 class ImageGenerator:
-    def generate_and_display_image(self, text, font, color):
+    @staticmethod
+    def generate_and_display_image(text, font, color):
         try:
             if not text.strip():
                 QMessageBox.critical(None, "Error", "Input text is empty. Please enter some text.")
