@@ -1,5 +1,7 @@
 #!/bin/bash
 
+continue_install="y"
+
 echo "This script will download and install the required dependencies to use MetalSlugFontReborn."
 echo "It will download Python 3, pip, venv, xcb, Pillow, and PyQt6."
 echo "Please ensure you have the necessary permissions to install packages."
