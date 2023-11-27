@@ -1,72 +1,95 @@
 #!/bin/bash
 
+echo ""
 echo "This script will download and install the required dependencies to use MetalSlugFontReborn."
-echo "It will download Python 3, pip, venv, xcb, mesa, Pillow, and PyQt6."
+echo "It will download Python 3, pip, venv, xcb, Pillow, and PyQt6."
+echo ""
 
+echo ""
 read -p "Do you want to install the dependencies? (y/n): " install_dependencies
+echo ""
 
+echo ""
 if [ "$install_dependencies" != "y" ]; then
     echo "Exiting script. No dependencies will be installed."
     exit 0
 fi
+echo ""
 
+echo ""
 read -p "Enter your package manager (apt/dnf/pacman/zypper): " package_manager
+echo ""
 
+echo ""
 case $package_manager in
     apt)
-        sudo apt update -y || { echo "Failed to update packages. Exiting."; exit 1; }
+        sudo apt update -y || { echo "Error updating package list. Continuing anyway."; }
         ;;
     dnf)
-        sudo dnf update -y || { echo "Failed to update packages. Exiting."; exit 1; }
+        sudo dnf update -y || { echo "Error updating package list. Continuing anyway."; }
         ;;
     pacman)
-        sudo pacman -Syu --noconfirm || { echo "Failed to update packages. Exiting."; exit 1; }
+        sudo pacman -Syu --noconfirm || { echo "Error updating package list. Continuing anyway."; }
         ;;
     zypper)
-        sudo zypper update -y || { echo "Failed to update packages. Exiting."; exit 1; }
+        sudo zypper update -y || { echo "Error updating package list. Continuing anyway."; }
         ;;
     *)
-        echo "Invalid package manager. Exiting."
+        echo "Invalid package manager."
         exit 1
         ;;
 esac
+echo ""
 
+echo ""
 case $package_manager in
     apt)
-        sudo apt-get install -y '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev || { echo "Failed to install xcb dependencies. Exiting."; exit 1; }
+        sudo apt install libxcb-cursor0 -y || { echo "Error installing libxcb-cursor0. Continuing anyway."; }
         ;;
     dnf)
-        sudo dnf install -y libxcb-devel libX11-devel mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel || { echo "Failed to install xcb dependencies. Exiting."; exit 1; }
+        sudo dnf install xcb-util-cursor -y || { echo "Error installing xcb-util-cursor. Continuing anyway."; }
         ;;
     pacman)
-        sudo pacman -S --noconfirm mesa || { echo "Failed to install mesa dependencies. Exiting."; exit 1; }
+        sudo pacman -S xcb-util-cursor --noconfirm || { echo "Error installing xcb-util-cursor. Continuing anyway."; }
         ;;
     zypper)
-        sudo zypper install -y libxcb-devel libX11-devel Mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel || { echo "Failed to install xcb dependencies. Exiting."; exit 1; }
+        sudo zypper install libxcb-cursor0 -y || { echo "Error installing libxcb-cursor0. Continuing anyway."; }
         ;;
 esac
+echo ""
 
+echo ""
 case $package_manager in
     apt)
-        sudo $package_manager install -y python3 python3-pip python3-venv || { echo "Failed to install Python and venv. Exiting."; exit 1; }
+        sudo $package_manager install python3 python3-pip python3-venv -y || { echo "Error installing Python dependencies. Continuing anyway."; }
         ;;
     dnf)
-        sudo $package_manager install -y python3 python3-pip || { echo "Failed to install Python and pip. Exiting."; exit 1; }
+        sudo $package_manager install python3 python3-pip python3-venv -y || { echo "Error installing Python dependencies. Continuing anyway."; }
         ;;
     pacman)
-        sudo $package_manager install --noconfirm python3 python3-pip python3-venv || { echo "Failed to install Python and pip. Exiting."; exit 1; }
+        sudo $package_manager -S python python-pip python-virtualenv --noconfirm || { echo "Error installing Python dependencies. Continuing anyway."; }
         ;;
     zypper)
-        sudo $package_manager install -y python3 python3-pip python3-virtualenv || { echo "Failed to install Python, pip, and venv. Exiting."; exit 1; }
+        sudo $package_manager install python3 python3-pip virtualenv -y || { echo "Error installing Python dependencies. Continuing anyway."; }
         ;;
 esac
+echo ""
 
-python3 -m venv metalslugfontreborn || { echo "Failed to create virtual environment. Exiting."; exit 1; }
-source metalslugfontreborn/bin/activate || { echo "Failed to activate virtual environment. Exiting."; exit 1; }
+echo ""
+python3 -m venv metalslugfontreborn || { echo "Error creating virtual environment. Continuing anyway."; }
+echo ""
 
-pip install -r requirements.txt || { echo "Failed to install Python packages. Exiting."; deactivate; exit 1; }
+echo ""
+source metalslugfontreborn/bin/activate || { echo "Error activating virtual environment. Continuing anyway."; }
+echo ""
 
-deactivate
+echo ""
+pip install -r requirements.txt || { echo "Error installing Python packages. Continuing anyway."; }
+echo ""
+
+echo ""
+deactivate || { echo "Error deactivating virtual environment. Continuing anyway."; }
+echo ""
 
 echo "|---------------------------------------------------------------------------|"
 echo "|                All dependencies have been successfully installed.         |"
