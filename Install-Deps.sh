@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "This script will download and install the required dependencies to use MetalSlugFontReborn."
-echo "It will download Python 3, pip, venv, xcb, Pillow, and PyQt6."
+echo "It will download Python 3, pip, venv, xcb, mesa, Pillow, and PyQt6."
 
 read -p "Do you want to install the dependencies? (y/n): " install_dependencies
 
@@ -39,7 +39,7 @@ case $package_manager in
         sudo dnf install -y libxcb-devel libX11-devel mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel || { echo "Failed to install xcb dependencies. Exiting."; exit 1; }
         ;;
     pacman)
-        sudo pacman -S --noconfirm libxcb libx11 libglu mesa libxrender libxi libxkbcommon libxkbcommon-x11 || { echo "Failed to install xcb dependencies. Exiting."; exit 1; }
+        sudo pacman -S --noconfirm mesa || { echo "Failed to install mesa dependencies. Exiting."; exit 1; }
         ;;
     zypper)
         sudo zypper install -y libxcb-devel libX11-devel Mesa-libGLU-devel libXrender-devel libXi-devel libxkbcommon-devel libxkbcommon-x11-devel || { echo "Failed to install xcb dependencies. Exiting."; exit 1; }
