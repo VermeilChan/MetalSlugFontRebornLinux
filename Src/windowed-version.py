@@ -1,131 +1,118 @@
-# Import necessary libraries
-import sys
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import (
+    QApplication,
+    QMainWindow, QVBoxLayout,
+    QLabel,
+    QLineEdit,
+    QComboBox,
+    QPushButton,
+    QWidget,
+    QSizePolicy,
+    QMessageBox
+)
 
-import tkinter as tk
-from tkinter import ttk, messagebox
-
-from ttkthemes import ThemedStyle
-
-from PIL import Image, ImageTk
-
-# Prevent the generation of .pyc (Python bytecode) files
-sys.dont_write_bytecode = True
-
-# Import necessary functions from the main module
 from main import generate_filename, generate_image, get_font_paths
 
-# Import necessary constants from the constants module
 from constants import VALID_COLORS_BY_FONT
 
-# Function to generate and display an image based on user input
-def generate_and_display_image():
-    text = text_entry.get()
-    font = int(font_var.get())
-    color = color_var.get()
+from theme import dark_theme
 
-    try:
-        # Check for empty input
-        if not text.strip():
-            messagebox.showerror("Error", "Input text is empty. Please enter some text.")
-            return
+class ImageGenerator:
+    @staticmethod
+    def generate_and_display_image(text, font, color):
+        try:
+            if not text.strip():
+                QMessageBox.critical(None, "Error", "Input text is empty. Please enter some text.")
+                return
 
-        # Generate a filename based on the input text
-        filename = generate_filename(text)
+            filename = generate_filename(text)
+            font_paths = get_font_paths(font, color)
 
-        # Get the font paths based on user selections
-        font_paths = get_font_paths(font, color)
+            img_path, error_message_generate = generate_image(text, filename, font_paths)
 
-        # Generate the image and handle any errors
-        img_path, error_message_generate = generate_image(text, filename, font_paths)
+            if error_message_generate:
+                QMessageBox.critical(None, "Error", f"Error: {error_message_generate}")
+            else:
+                QMessageBox.information(None, "Success", f"Image successfully generated and saved as: {img_path}")
 
-        if error_message_generate:
-            messagebox.showerror("Error", f"Error: {error_message_generate}")
-        else:
-            messagebox.showinfo("Success", f"Image successfully generated and saved as: {img_path}")
-    except FileNotFoundError as e:
-        error_message_generate = f"Font file not found: {e.filename}"
-        messagebox.showerror("Error", error_message_generate)
-    except Exception as e:
-        error_message_generate = f"An error occurred: {e}"
-        messagebox.showerror("Error", error_message_generate)
+        except FileNotFoundError as e:
+            error_message_generate = f"Font file not found: {e.filename}"
+            QMessageBox.critical(None, "Error", error_message_generate)
+        except Exception as e:
+            error_message_generate = f"An error occurred: {e}"
+            QMessageBox.critical(None, "Error", error_message_generate)
 
-# Function to handle font selection change
-def on_font_change(*args):
-    font = int(font_var.get())
-    valid_colors = VALID_COLORS_BY_FONT.get(font, [])
-    color_combobox['values'] = valid_colors
-    color_var.set(valid_colors[0] if valid_colors else "")
+class MetalSlugFontReborn(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
-# Function to toggle dark mode and light mode
-def toggle_theme():
-    current_theme = style.theme_use()
-    if current_theme == "equilux":
-        style.set_theme("elegance")  # Switch to light theme
-    else:
-        style.set_theme("equilux")  # Switch to dark theme
+        self.setWindowTitle("MetalSlugFontReborn")
 
-# Create the main window
-root = tk.Tk()
-root.title("Metal Slug Font")
-im = Image.open('Assets/Icon/Raven.ico')
-photo = ImageTk.PhotoImage(im)
-root.wm_iconphoto(True, photo)
+        icon_path = 'Assets/Icons/Raubtier.ico'
+        self.setWindowIcon(QIcon(icon_path))
 
-# Apply the initial dark theme
-style = ThemedStyle(root)
-style.set_theme("equilux")
+        central_widget = QWidget(self)
+        self.setCentralWidget(central_widget)
+        layout = QVBoxLayout(central_widget)
 
-# Create a frame for input elements
-frame = ttk.Frame(root, padding=20)
-frame.pack(expand=True, fill="both")
+        text_label = QLabel("Text to Generate:")
+        layout.addWidget(text_label)
+        self.text_entry = QLineEdit()
+        self.text_entry.setMinimumWidth(600)
+        self.text_entry.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        layout.addWidget(self.text_entry)
 
-# Label for text input
-text_label = ttk.Label(frame, text="Text to Generate:", font=("Ubuntu", 14))
-text_label.grid(row=0, column=0, columnspan=3, sticky="w")
+        font_label = QLabel("Select Font:")
+        layout.addWidget(font_label)
+        self.font_combobox = QComboBox()
+        self.font_combobox.addItems(["1", "2", "3", "4", "5"])
+        self.font_combobox.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        layout.addWidget(self.font_combobox)
 
-# Text input field
-text_entry = ttk.Entry(frame, font=("Ubuntu", 14))
-text_entry.grid(row=1, column=0, columnspan=3, sticky="ew")
+        color_label = QLabel("Select Color:")
+        layout.addWidget(color_label)
+        self.color_combobox = QComboBox()
+        self.color_combobox.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        layout.addWidget(self.color_combobox)
 
-# Label for font selection
-font_label = ttk.Label(frame, text="Select Font:", font=("Ubuntu", 14))
-font_label.grid(row=2, column=0, columnspan=3, sticky="w")
+        generate_button = QPushButton("Generate and Save Image", self)
+        generate_button.clicked.connect(self.generate_and_display_image)
+        generate_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        layout.addWidget(generate_button)
 
-# Font selection dropdown
-font_var = tk.StringVar()
-font_var.set("1")  # Default font selection
-font_combobox = ttk.Combobox(frame, textvariable=font_var, values=["1", "2", "3", "4", "5"], font=("Ubuntu", 14))
-font_combobox.grid(row=3, column=0, columnspan=3, sticky="ew")
+        clear_button = QPushButton("Clear", self)
+        clear_button.clicked.connect(self.text_entry.clear)
+        clear_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        layout.addWidget(clear_button)
 
-# Label for color selection
-color_label = ttk.Label(frame, text="Select Color:", font=("Ubuntu", 14))
-color_label.grid(row=4, column=0, columnspan=3, sticky="w")
+        self.color_combobox.setEnabled(False)
+        self.font_combobox.currentIndexChanged.connect(self.on_font_change)
 
-# Color selection dropdown
-color_var = tk.StringVar()
-color_var.set("Blue")  # Default color selection
-color_combobox = ttk.Combobox(frame, textvariable=color_var, values=[], font=("Ubuntu", 14))
-color_combobox.grid(row=5, column=0, columnspan=3, sticky="ew")
+        self.on_font_change()
 
-# Bind the font selection change event
-font_var.trace_add("write", on_font_change)
+        self.setStyleSheet(dark_theme)
 
-# Generate button
-style.configure("TButton", font=("Ubuntu", 14))
-generate_button = ttk.Button(frame, text="Generate and Save Image", command=generate_and_display_image)
-generate_button.grid(row=6, column=0, columnspan=3, sticky="ew")
+    def on_font_change(self):
+        font = int(self.font_combobox.currentText())
+        valid_colors = VALID_COLORS_BY_FONT.get(font, [])
+        self.color_combobox.clear()
+        self.color_combobox.addItems(valid_colors)
+        self.color_combobox.setEnabled(bool(valid_colors))
+        if valid_colors:
+            self.color_combobox.setCurrentIndex(0)
 
-# Clear button
-clear_button = ttk.Button(frame, text="Clear", command=lambda: text_entry.delete(0, tk.END))
-clear_button.grid(row=7, column=0, columnspan=3, sticky="ew")
+    def generate_and_display_image(self):
+        text = self.text_entry.text()
+        font = int(self.font_combobox.currentText())
+        color = self.color_combobox.currentText()
 
-# Theme toggle button
-theme_button = ttk.Button(frame, text="Toggle Theme", command=toggle_theme)
-theme_button.grid(row=8, column=0, columnspan=3, sticky="ew")
+        ImageGenerator.generate_and_display_image(text, font, color)
 
-# Add padding and make widgets expand
-for child in frame.winfo_children():
-    child.grid_configure(padx=10, pady=10, sticky="nsew")
+def main():
+    app = QApplication([])
+    window = MetalSlugFontReborn()
+    window.show()
+    app.exec()
 
-# Run the tkinter main loop
-root.mainloop()
+if __name__ == "__main__":
+    main()
