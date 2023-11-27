@@ -47,11 +47,14 @@ case $package_manager in
 esac
 
 case $package_manager in
-    apt | pacman)
+    apt)
         sudo $package_manager install -y python3 python3-pip python3-venv || { echo "Failed to install Python and venv. Exiting."; exit 1; }
         ;;
     dnf)
         sudo $package_manager install -y python3 python3-pip || { echo "Failed to install Python and pip. Exiting."; exit 1; }
+        ;;
+    pacman)
+        sudo $package_manager install --noconfirm python3 python3-pip python3-venv || { echo "Failed to install Python and pip. Exiting."; exit 1; }
         ;;
     zypper)
         sudo $package_manager install -y python3 python3-pip python3-virtualenv || { echo "Failed to install Python, pip, and venv. Exiting."; exit 1; }
