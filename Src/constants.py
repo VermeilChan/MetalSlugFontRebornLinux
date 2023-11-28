@@ -1,7 +1,7 @@
-import os
+from pathlib import Path
 
 SPACE_WIDTH = 30
-DESKTOP_PATH = os.path.expanduser("~/Desktop")
+DESKTOP_PATH = Path.home() / 'Desktop'
 SPECIAL_CHARACTERS = {
     '!': 'Exclamation',
     '?': 'Question',

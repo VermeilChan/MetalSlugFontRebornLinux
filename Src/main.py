@@ -43,7 +43,7 @@ def generate_image(text, filename, font_paths):
         else:
             char_img_path = get_character_image_path(char, font_paths)
             if not char_img_path or not char_img_path.is_file():
-                return None, f"Error: Image not found for character '{char}'"
+                return None, f"Image not found for character '{char}'"
 
             char_img = Image.open(char_img_path).convert("RGBA")
 

@@ -1,9 +1,8 @@
-import os
 import sys
 
 from main import generate_filename, generate_image, get_font_paths
 
-from constants import CLOSING_MESSAGE, VALID_COLORS_BY_FONT
+from constants import CLOSING_MESSAGE, VALID_COLORS_BY_FONT, DESKTOP_PATH
 
 def display_intro_message():
     print("Note: Metal Slug Font style conversion may not be compatible with all fonts.")
@@ -40,7 +39,7 @@ def select_font_and_color():
             else:
                 print("Invalid input. Please choose a font between 1 and 5.")
 
-        except ValueError:
+        except:
             print("Invalid input. Please enter a valid number.")
 
 def generate_and_display_image(text, font, color):
@@ -62,18 +61,12 @@ def generate_and_display_image(text, font, color):
         if error_message_generate:
             print(f"Error: {error_message_generate}")
         else:
-            print(f"Image successfully generated and saved as: {img_path}")
-            print(f"You can find the image on your desktop: {os.path.abspath(os.path.join(os.path.expanduser('~'), 'Desktop', img_path))}")
+            print(f"Image successfully generated and saved as: {filename}")
+            print(f"You can find the image on your desktop: {DESKTOP_PATH / img_path}")
 
-    except KeyboardInterrupt:
+    except:
         print(CLOSING_MESSAGE)
         sys.exit(0)
-    except FileNotFoundError as e:
-        error_message_generate = f"Font file not found: {e.filename}"
-        print(error_message_generate)
-    except Exception as e:
-        error_message_generate = f"An error occurred: {e}"
-        print(error_message_generate)
 
 def main():
     display_intro_message()
@@ -84,12 +77,9 @@ def main():
         while True:
             text = get_user_input()
             generate_and_display_image(text, font, color)
-    except KeyboardInterrupt:
+    except:
         print(CLOSING_MESSAGE)
         sys.exit(0)
-    except Exception as e:
-        error_message_main_inner = f"An unexpected error occurred: {e}"
-        print(error_message_main_inner)
 
 if __name__ == "__main__":
     main()
