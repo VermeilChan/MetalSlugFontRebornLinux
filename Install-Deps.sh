@@ -39,77 +39,56 @@ else
 
     case $package_manager in
         apt)
-            sudo apt update -y || { echo "Error: Failed to update package list using apt. Do you want to continue? (y/n)"; read -r continue_install; }
+            sudo apt update -y || { echo "Error: Failed to update package list using apt. Exiting script."; exit 1; }
             ;;
         dnf)
-            sudo dnf update -y || { echo "Error: Failed to update package list using dnf. Do you want to continue? (y/n)"; read -r continue_install; }
+            sudo dnf update -y || { echo "Error: Failed to update package list using dnf. Exiting script."; exit 1; }
             ;;
         pacman)
-            sudo pacman -Syu --noconfirm || { echo "Error: Failed to update package list using pacman. Do you want to continue? (y/n)"; read -r continue_install; }
+            sudo pacman -Syu --noconfirm || { echo "Error: Failed to update package list using pacman. Exiting script."; exit 1; }
             ;;
         zypper)
-            sudo zypper update -y || { echo "Error: Failed to update package list using zypper. Do you want to continue? (y/n)"; read -r continue_install; }
+            sudo zypper update -y || { echo "Error: Failed to update package list using zypper. Exiting script."; exit 1; }
             ;;
     esac
-
-    if [ "$continue_install" != "y" ]; then
-        echo "Exiting script. Installation aborted."
-        exit 1
-    fi
 
     echo "Installing necessary libraries for xcb support..."
     case $package_manager in
         apt)
-            sudo apt install libxcb-cursor0 -y || { echo "Error: Failed to install libxcb-cursor0 using apt. Do you want to continue? (y/n)"; read -r continue_install; }
+            sudo apt install libxcb-cursor0 -y || { echo "Error: Failed to install libxcb-cursor0 using apt. Exiting script."; exit 1; }
             ;;
         dnf)
-            sudo dnf install xcb-util-cursor -y || { echo "Error: Failed to install xcb-util-cursor using dnf. Do you want to continue? (y/n)"; read -r continue_install; }
+            sudo dnf install xcb-util-cursor -y || { echo "Error: Failed to install xcb-util-cursor using dnf. Exiting script."; exit 1; }
             ;;
         pacman)
-            sudo pacman -S xcb-util-cursor --noconfirm || { echo "Error: Failed to install xcb-util-cursor using pacman. Do you want to continue? (y/n)"; read -r continue_install; }
+            sudo pacman -S xcb-util-cursor --noconfirm || { echo "Error: Failed to install xcb-util-cursor using pacman. Exiting script."; exit 1; }
             ;;
         zypper)
-            sudo zypper install libxcb-cursor0 -y || { echo "Error: Failed to install libxcb-cursor0 using zypper. Do you want to continue? (y/n)"; read -r continue_install; }
+            sudo zypper install libxcb-cursor0 -y || { echo "Error: Failed to install libxcb-cursor0 using zypper. Exiting script."; exit 1; }
             ;;
     esac
-
-    if [ "$continue_install" != "y" ]; then
-        echo "Exiting script. Installation aborted."
-        exit 1
-    fi
-
-    echo
 fi
 
+echo
 echo "Installing Python and virtual environment..."
 case $package_manager in
     apt | dnf)
-        sudo $package_manager install python3 python3-pip python3-venv -y || { echo "Error: Failed to install Python dependencies using $package_manager. Do you want to continue? (y/n)"; read -r continue_install; }
+        sudo $package_manager install python3 python3-pip python3-venv -y || { echo "Error: Failed to install Python dependencies using $package_manager. Exiting script."; exit 1; }
         ;;
     pacman)
-        sudo $package_manager -S python python-pip python-virtualenv --noconfirm || { echo "Error: Failed to install Python dependencies using pacman. Do you want to continue? (y/n)"; read -r continue_install; }
+        sudo $package_manager -S python python-pip python-virtualenv --noconfirm || { echo "Error: Failed to install Python dependencies using pacman. Exiting script."; exit 1; }
         ;;
     zypper)
-        sudo $package_manager install python3 python3-pip virtualenv -y || { echo "Error: Failed to install Python dependencies using zypper. Do you want to continue? (y/n)"; read -r continue_install; }
+        sudo $package_manager install python3 python3-pip virtualenv -y || { echo "Error: Failed to install Python dependencies using zypper. Exiting script."; exit 1; }
         ;;
 esac
-
-if [ "$continue_install" != "y" ]; then
-    echo "Exiting script. Installation aborted."
-    exit 1
-fi
 
 echo
 
 echo "Creating and activating virtual environment..."
-python3 -m venv metalslugfontreborn || { echo "Error: Failed to create virtual environment. Do you want to continue? (y/n)"; read -r continue_install; }
+python3 -m venv metalslugfontreborn || { echo "Error: Failed to create virtual environment. Exiting script."; exit 1; }
 
-if [ "$continue_install" != "y" ]; then
-    echo "Exiting script. Installation aborted."
-    exit 1
-fi
-
-source metalslugfontreborn/bin/activate || { echo "Error: Failed to activate virtual environment. Do you want to continue? (y/n)"; read -r continue_install; }
+source metalslugfontreborn/bin/activate || { echo "Error: Failed to activate virtual environment. Exiting script."; exit 1; }
 
 if [ $? -eq 0 ]; then
     echo "Virtual environment activated successfully."
@@ -120,23 +99,13 @@ fi
 echo
 
 echo "Installing Python packages from requirements.txt..."
-pip install -r requirements.txt || { echo "Error: Failed to install Python packages. Do you want to continue? (y/n)"; read -r continue_install; }
+pip install -r requirements.txt || { echo "Error: Failed to install Python packages. Exiting script."; exit 1; }
 echo "The program will not work if you don't install Pillow"
-
-if [ "$continue_install" != "y" ]; then
-    echo "Exiting script. Installation aborted."
-    exit 1
-fi
 
 echo
 
 echo "Deactivating virtual environment..."
-deactivate || { echo "Error: Failed to deactivate virtual environment. Do you want to continue? (y/n)"; read -r continue_install; }
-
-if [ "$continue_install" != "y" ]; then
-    echo "Exiting script. Installation aborted."
-    exit 1
-fi
+deactivate || { echo "Error: Failed to deactivate virtual environment. Exiting script."; exit 1; }
 
 echo "|---------------------------------------------------------------------------|"
 echo "| Selected package manager: $package_manager                                 "
