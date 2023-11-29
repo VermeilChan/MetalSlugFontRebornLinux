@@ -22,23 +22,35 @@ echo
 if [ "$install_xcb_libraries" != "y" ]; then
     echo "Skipping installation of additional libraries for xcb support."
 else
-    read -p "Enter your package manager (apt/dnf/pacman/zypper): " package_manager
+    echo "Before proceeding, please choose your package manager:"
+    echo "1. Debian/Ubuntu Based Distros : apt"
+    echo "2. Fedora Based Distros : dnf"
+    echo "3. Arch Based Distros : pacman"
+    echo "4. OpenSUSE Distros : zypper"
+
+    read -p "Enter the number corresponding to your package manager: " package_choice
     echo
 
-    case $package_manager in
-        apt)
-            echo "Debian/Ubuntu Based Distros : apt"
+    case $package_choice in
+        1)
+            package_manager="apt"
             ;;
-        dnf)
-            echo "Fedora Based Distros : dnf"
+        2)
+            package_manager="dnf"
             ;;
-        pacman)
-            echo "Arch Based Distros : pacman"
+        3)
+            package_manager="pacman"
             ;;
-        zypper)
-            echo "OpenSUSE Distros : zypper"
+        4)
+            package_manager="zypper"
+            ;;
+        *)
+            echo "Invalid choice. Exiting."
+            exit 1
             ;;
     esac
+
+    echo "You have selected: $package_manager"
 fi
 
     case $package_manager in
@@ -79,9 +91,6 @@ fi
         pacman)
             sudo pacman -S xcb-util-cursor --noconfirm || { echo "Error: Failed to install xcb-util-cursor using pacman. Exiting script."; exit 1; }
             ;;
-        zypper)
-            sudo zypper install libxcb-cursor0 -y || { echo "Error: Failed to install libxcb-cursor0 using zypper. Exiting script."; exit 1; }
-            ;;
     esac
 fi
 
@@ -95,7 +104,7 @@ case $package_manager in
         sudo $package_manager -S python python-pip python-virtualenv --noconfirm || { echo "Error: Failed to install Python dependencies using pacman. Exiting script."; exit 1; }
         ;;
     zypper)
-        sudo $package_manager install python3 python3-pip virtualenv -y || { echo "Error: Failed to install Python dependencies using zypper. Exiting script."; exit 1; }
+        sudo $package_manager install -y python3 python3-pip || { echo "Error: Failed to install Python dependencies using zypper. Exiting script."; exit 1; }
         ;;
 esac
 
