@@ -26,6 +26,22 @@ else
     echo
 
     case $package_manager in
+        apt)
+            echo "Debian/Ubuntu Based Distros : apt"
+            ;;
+        dnf)
+            echo "Fedora Based Distros : dnf"
+            ;;
+        pacman)
+            echo "Arch Based Distros : pacman"
+            ;;
+        zypper)
+            echo "OpenSUSE Distros : zypper"
+            ;;
+    esac
+fi
+
+    case $package_manager in
         apt | dnf | pacman | zypper)
             ;;
         *)
