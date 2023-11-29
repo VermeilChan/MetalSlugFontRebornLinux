@@ -26,7 +26,7 @@ else
     echo "1. Debian/Ubuntu Based Distros : apt"
     echo "2. Fedora Based Distros : dnf"
     echo "3. Arch Based Distros : pacman"
-    echo "4. OpenSUSE Distros : zypper"
+    echo "4. OpenSUSE Based Distros : zypper"
 
     read -p "Enter the number corresponding to your package manager: " package_choice
     echo
@@ -51,7 +51,6 @@ else
     esac
 
     echo "You have selected: $package_manager"
-fi
 
     case $package_manager in
         apt | dnf | pacman | zypper)
