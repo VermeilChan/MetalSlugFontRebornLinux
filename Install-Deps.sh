@@ -1,13 +1,10 @@
 #!/bin/bash
 
-continue_install="y"
-
-echo "This script will download and install the required dependencies to use MetalSlugFontReborn."
-echo "It will download Python 3, pip, venv, xcb, Pillow, and PyQt6."
-echo "Please ensure you have the necessary permissions to install packages."
+echo "This script will download the required dependencies to use MetalSlugFontReborn."
+echo "It will automatically download Python 3, pip, venv, and optionally, xcb for GUI support."
 echo
 
-read -p "Do you want to install the dependencies? (y/n): " install_dependencies
+read -p "Do you want to continue? (y/n): " install_dependencies
 echo
 
 if [ "$install_dependencies" != "y" ]; then
@@ -16,41 +13,14 @@ if [ "$install_dependencies" != "y" ]; then
 fi
 echo
 
-read -p "Do you want to install additional libraries for xcb support? required for GUI version (y/n): " install_xcb_libraries
+read -p "Do you want to use the GUI version? (y/n): " install_xcb_libraries
 echo
 
 if [ "$install_xcb_libraries" != "y" ]; then
-    echo "Skipping installation of additional libraries for xcb support."
+    echo "Skipping installation of libraries for GUI support."
 else
-    echo "Before proceeding, please choose your package manager:"
-    echo "1. Debian/Ubuntu Based Distros : apt"
-    echo "2. Fedora Based Distros : dnf"
-    echo "3. Arch Based Distros : pacman"
-    echo "4. OpenSUSE Based Distros : zypper"
-
-    read -p "Enter the number corresponding to your package manager: " package_choice
+    read -p "Enter your package manager (apt/dnf/pacman/zypper): " package_manager
     echo
-
-    case $package_choice in
-        1)
-            package_manager="apt"
-            ;;
-        2)
-            package_manager="dnf"
-            ;;
-        3)
-            package_manager="pacman"
-            ;;
-        4)
-            package_manager="zypper"
-            ;;
-        *)
-            echo "Invalid choice. Exiting."
-            exit 1
-            ;;
-    esac
-
-    echo "You have selected: $package_manager"
 
     case $package_manager in
         apt | dnf | pacman | zypper)
@@ -62,90 +32,66 @@ else
     esac
     echo
 
-    echo "Please wait, installing dependencies..."
+    echo "Please wait, downloading dependencies..."
 
     case $package_manager in
         apt)
-            sudo apt update -y || { echo "Error: Failed to update package list using apt. Exiting script."; exit 1; }
+            sudo apt update -y
             ;;
         dnf)
-            sudo dnf update -y || { echo "Error: Failed to update package list using dnf. Exiting script."; exit 1; }
+            sudo dnf update -y
             ;;
         pacman)
-            sudo pacman -Syu --noconfirm || { echo "Error: Failed to update package list using pacman. Exiting script."; exit 1; }
+            sudo pacman -Syu --noconfirm
             ;;
         zypper)
-            sudo zypper update -y || { echo "Error: Failed to update package list using zypper. Exiting script."; exit 1; }
+            sudo zypper update -y
             ;;
     esac
 
-    echo "Installing necessary libraries for xcb support..."
+    echo "Installing necessary libraries for GUI support..."
     case $package_manager in
         apt)
-            sudo apt install libxcb-cursor0 -y || { echo "Error: Failed to install libxcb-cursor0 using apt. Exiting script."; exit 1; }
+            sudo apt install libxcb-cursor0 -y
             ;;
         dnf)
-            sudo dnf install xcb-util-cursor -y || { echo "Error: Failed to install xcb-util-cursor using dnf. Exiting script."; exit 1; }
+            sudo dnf install xcb-util-cursor -y
             ;;
         pacman)
-            sudo pacman -S xcb-util-cursor --noconfirm || { echo "Error: Failed to install xcb-util-cursor using pacman. Exiting script."; exit 1; }
+            sudo pacman -S xcb-util-cursor --noconfirm
+            ;;
+        zypper)
+            sudo zypper install -y libxcb-cursor0
             ;;
     esac
 fi
 
-echo
-echo "Installing Python and virtual environment..."
+echo "Installing Python 3, pip, and venv..."
 case $package_manager in
     apt | dnf)
-        sudo $package_manager install python3 python3-pip python3-venv -y || { echo "Error: Failed to install Python dependencies using $package_manager. Exiting script."; exit 1; }
+        sudo $package_manager install python3 python3-pip python3-venv -y
         ;;
     pacman)
-        sudo $package_manager -S python python-pip python-virtualenv --noconfirm || { echo "Error: Failed to install Python dependencies using pacman. Exiting script."; exit 1; }
+        sudo $package_manager -S python python-pip python-virtualenv --noconfirm
         ;;
     zypper)
-        sudo $package_manager install -y python3 python3-pip || { echo "Error: Failed to install Python dependencies using zypper. Exiting script."; exit 1; }
+        sudo $package_manager install -y python3 python3-pip python3-virtualenv
         ;;
 esac
 
-echo
-
 echo "Creating and activating virtual environment..."
-python3 -m venv metalslugfontreborn || { echo "Error: Failed to create virtual environment. Exiting script."; exit 1; }
-
-source metalslugfontreborn/bin/activate || { echo "Error: Failed to activate virtual environment. Exiting script."; exit 1; }
-
-if [ $? -eq 0 ]; then
-    echo "Virtual environment activated successfully."
-else
-    echo "Error: Virtual environment activation failed. Exiting script."
-    exit 1
-fi
-echo
+python3 -m venv metalslugfontreborn
+source metalslugfontreborn/bin/activate
 
 echo "Installing Python packages from requirements.txt..."
-pip install -r requirements.txt || { echo "Error: Failed to install Python packages. Exiting script."; exit 1; }
-echo "The program will not work if you don't install Pillow"
-
-echo
+echo "Pillow, PyQt6"
+pip install -r requirements.txt
 
 echo "Deactivating virtual environment..."
-deactivate || { echo "Error: Failed to deactivate virtual environment. Exiting script."; exit 1; }
+deactivate
 
-echo "|---------------------------------------------------------------------------|"
-echo "| Selected package manager: $package_manager                                 "
-echo "|---------------------------------------------------------------------------|"
-echo "| Additional libraries for xcb support have been installed.                 |"
-echo "|---------------------------------------------------------------------------|"
-echo "| Python3, pip, and venv have been installed.                               |"
-echo "|---------------------------------------------------------------------------|"
-echo "| Virtual environment has been created and activated.                       |"
-echo "|---------------------------------------------------------------------------|"
-echo "| Packages have been installed from the requirements.txt file.              |"
-echo "|---------------------------------------------------------------------------|"
-echo "| Virtual environment has been deactivated.                                 |"
 echo "|---------------------------------------------------------------------------|"
 echo "| Now, please run the following command:                                    |"
 echo "| bash Run.sh                                                               |"
 echo "|---------------------------------------------------------------------------|"
 echo
-echo "MetalSlugFontReborn setup script completed."
