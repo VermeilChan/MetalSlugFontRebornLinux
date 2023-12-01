@@ -18,6 +18,7 @@ echo
 
 if [ "$install_xcb_libraries" != "y" ]; then
     echo "Skipping installation of libraries for GUI support."
+    install_pyqt=false
 else
     read -p "Enter your package manager (apt/dnf/pacman/zypper): " package_manager
     echo
@@ -64,6 +65,8 @@ else
             sudo zypper install -y libxcb-cursor0
             ;;
     esac
+    
+    install_pyqt=true
 fi
 
 echo "Installing Python 3, pip, and venv..."
@@ -83,9 +86,13 @@ echo "Creating and activating virtual environment..."
 python3 -m venv metalslugfontreborn
 source metalslugfontreborn/bin/activate
 
-echo "Installing Python packages from requirements.txt..."
-echo "Pillow, PyQt6"
-pip install -r requirements.txt
+echo "Installing Python packages"
+pip install Pillow>=10.1.0
+
+if [ "$install_pyqt" = true ]; then
+    echo "Installing PyQt6..."
+    pip install PyQt6>=6.6.0
+fi
 
 echo "Deactivating virtual environment..."
 deactivate
