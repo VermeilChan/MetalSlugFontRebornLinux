@@ -5,16 +5,16 @@ from main import generate_filename, generate_image, get_font_paths
 from constants import CLOSING_MESSAGE, VALID_COLORS_BY_FONT, DESKTOP_PATH
 
 def display_intro_message():
-    print("Note: Metal Slug Font style conversion may not be compatible with all fonts.")
-    print("Refer to the SUPPORTED.md file for details.")
+    print("Note: Converting your text to the Metal Slug font may not work with all fonts.")
+    print("Please refer to SUPPORTED.md file for more information.\n")
 
 def get_user_input():
-    return input("Enter the text you want to generate (type 'exit' to close): ")
+    return input("\nEnter the text you want to generate: ")
 
 def select_font_and_color():
     while True:
         try:
-            user_input = input("Choose a font from 1 to 5 (Refer to EXAMPLE.md for Font Preview) or type 'exit' to close: ")
+            user_input = input("Choose a font from 1 to 5 (type 'exit' to close): ")
 
             if user_input.lower() == 'exit':
                 print(CLOSING_MESSAGE)
@@ -22,10 +22,10 @@ def select_font_and_color():
 
             font = int(user_input)
 
-            if font in VALID_COLORS_BY_FONT:
-                valid_colors = VALID_COLORS_BY_FONT[font]
-                print("Available colors: " + " | ".join(valid_colors))
-                color_input = input("Enter the color you want to use or type 'exit' to close: ")
+            if 1 <= font <= 5:
+                valid_colors = VALID_COLORS_BY_FONT.get(font, [])
+                print("\nAvailable colors: " + " | ".join(valid_colors))
+                color_input = input("\nChoose a color: ")
 
                 if color_input.lower() == 'exit':
                     print(CLOSING_MESSAGE)
@@ -35,36 +35,37 @@ def select_font_and_color():
                     return font, color_input
                 else:
                     print("Invalid color. Please choose a valid color.")
-
             else:
                 print("Invalid input. Please choose a font between 1 and 5.")
 
-        except:
+        except ValueError:
             print("Invalid input. Please enter a valid number.")
-
-def generate_and_display_image(text, font, color):
-    try:
-        if text.lower() == 'exit':
+        except KeyboardInterrupt:
             print(CLOSING_MESSAGE)
             sys.exit(0)
 
-        if not text.strip():
-            print("Input text is empty. Please enter some text.")
-            return
+def generate_and_display_image(text, font, color):
+    if text.lower() == 'exit':
+        print(CLOSING_MESSAGE)
+        sys.exit(0)
 
+    if not text.strip():
+        print("Input text is empty. Please enter some text.")
+        return
+
+    try:
         filename = generate_filename(text)
-
         font_paths = get_font_paths(font, color)
-
         img_path, error_message_generate = generate_image(text, filename, font_paths)
 
         if error_message_generate:
             print(f"Error: {error_message_generate}")
         else:
-            print(f"Image successfully generated and saved as: {filename}")
+            print(f"\nImage saved as: {filename}")
             print(f"You can find the image on your desktop: {DESKTOP_PATH / img_path}")
 
-    except:
+    except Exception as e:
+        print(f"Error: {e}")
         print(CLOSING_MESSAGE)
         sys.exit(0)
 
@@ -77,7 +78,7 @@ def main():
         while True:
             text = get_user_input()
             generate_and_display_image(text, font, color)
-    except:
+    except KeyboardInterrupt:
         print(CLOSING_MESSAGE)
         sys.exit(0)
 
