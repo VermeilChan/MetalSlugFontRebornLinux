@@ -15,49 +15,70 @@ def get_font_paths(font, color):
     base_path = Path('Assets') / 'Fonts' / f'Font-{font}' / f'Font-{font}-{color}'
     return [base_path / folder for folder in ['Letters', 'Numbers', 'Symbols']]
 
-def get_character_image_path(char, font_paths):
+character_image_cache = {}
+
+def get_character_image_path(character, font_paths):
     CHARACTERS_FOLDER, NUMBERS_FOLDER, SYMBOLS_FOLDER = font_paths
 
-    if char.isalpha():
-        folder = 'Lower-Case' if char.islower() else 'Upper-Case'
-        char_img_path = CHARACTERS_FOLDER / folder / f"{char}.png"
-    elif char.isdigit():
-        char_img_path = NUMBERS_FOLDER / f"{char}.png"
-    elif char == ' ':
+    if character.isalpha():
+        folder = 'Lower-Case' if character.islower() else 'Upper-Case'
+        character_image_path = CHARACTERS_FOLDER / folder / f"{character}.png"
+    elif character.isdigit():
+        character_image_path = NUMBERS_FOLDER / f"{character}.png"
+    elif character.isspace():
         return None
     else:
-        char_img_path = SYMBOLS_FOLDER / f"{SPECIAL_CHARACTERS.get(char, '')}.png"
+        character_image_path = SYMBOLS_FOLDER / f"{SPECIAL_CHARACTERS.get(character, '')}.png"
 
-    return char_img_path if char_img_path.is_file() else None
+    return character_image_path if character_image_path.is_file() else None
+
+def get_character_image(character, font_paths):
+    if character in character_image_cache:
+        return character_image_cache[character]
+
+    if character.isspace():
+        return create_character_image(character, font_paths)
+
+    character_image_path = get_character_image_path(character, font_paths)
+    if not character_image_path or not character_image_path.is_file():
+        raise FileNotFoundError(f"Image not found for character '{character}'")
+
+    image = Image.open(character_image_path).convert("RGBA")
+    character_image_cache[character] = image
+
+    return image
+
+def create_character_image(character, _):
+    if character.isspace():
+        return Image.new("RGBA", (SPACE_WIDTH, 1), (0, 0, 0, 0))
+
+def calculate_total_width_and_max_height(text, font_paths):
+    total_width = 0
+    max_height = 0
+
+    for character in text:
+        character_image = get_character_image(character, font_paths)
+        max_height = max(max_height, character_image.height)
+        total_width += character_image.width
+
+    return total_width, max_height
+
+def paste_character_images_to_final_image(text, font_paths, total_width, max_height):
+    x_position = 0
+    final_image = Image.new("RGBA", (total_width, max_height), (0, 0, 0, 0))
+
+    for character in text:
+        character_image = get_character_image(character, font_paths)
+        final_image.paste(character_image, (x_position, 0))
+        x_position += character_image.width
+
+    return final_image
 
 def generate_image(text, filename, font_paths):
-    img_height = None
-    char_images = {}
-    img_path = Path(DESKTOP_PATH) / filename
+    total_width, max_height = calculate_total_width_and_max_height(text, font_paths)
+    final_image = paste_character_images_to_final_image(text, font_paths, total_width, max_height)
+    
+    image_path = Path(DESKTOP_PATH) / filename
+    final_image.save(image_path)
 
-    total_width = 0
-
-    for char in text:
-        if char == ' ':
-            char_img = Image.new("RGBA", (SPACE_WIDTH, img_height or 1), (0, 0, 0, 0))
-        else:
-            char_img_path = get_character_image_path(char, font_paths)
-            if not char_img_path or not char_img_path.is_file():
-                return None, f"Image not found for character '{char}'"
-
-            char_img = Image.open(char_img_path).convert("RGBA")
-
-        char_images[char] = char_img
-        img_height = char_img.height if img_height is None else img_height
-        total_width += char_img.width
-
-    final_img = Image.new("RGBA", (total_width, img_height), (0, 0, 0, 0))
-    x = 0
-
-    for char in text:
-        final_img.paste(char_images[char], (x, 0))
-        x += char_images[char].width
-
-    final_img.save(img_path)
-
-    return str(img_path), None
+    return str(image_path), None
