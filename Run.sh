@@ -23,8 +23,13 @@ case $choice in
 esac
 
 if [ $? -ne 0 ]; then
+    echo ""
     echo "If the GUI version isn't working for you, even after installing xcb."
     echo "please refer to the discussions on GitHub at https://github.com/NVlabs/instant-ngp/discussions/300."
+    echo ""
+    echo "Or, check if a new Qt6 update has been released."
+    echo "If so, you may need to wait until PyQt6 updates or use the CLI version."
+    echo ""
 fi
 
 deactivate

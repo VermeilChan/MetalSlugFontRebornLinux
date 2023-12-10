@@ -84,14 +84,13 @@ python3 -m venv metalslugfontreborn
 source metalslugfontreborn/bin/activate
 
 echo "Installing Python packages from requirements.txt..."
-echo "Pillow, PyQt6"
 pip install -r requirements.txt
 
 echo "Deactivating virtual environment..."
 deactivate
 
-echo "|---------------------------------------------------------------------------|"
-echo "| Now, please run the following command:                                    |"
-echo "| bash Run.sh                                                               |"
-echo "|---------------------------------------------------------------------------|"
+echo "|-----------------------------------------|"
+echo "| Now, please run the following command:  |"
+echo "|             bash Run.sh                 |"
+echo "|-----------------------------------------|"
 echo
