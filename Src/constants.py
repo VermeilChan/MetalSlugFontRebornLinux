@@ -80,7 +80,3 @@ VALID_COLORS_BY_FONT = {
     4: ["Blue", "Orange-1"],
     5: ["Orange-1"]
 }
-<<<<<<< HEAD
-=======
-CLOSING_MESSAGE = "\nClosing...\n"
->>>>>>> 4bbe5e0f61834485180820a80a05c1231f2c3b26

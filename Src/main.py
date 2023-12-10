@@ -15,11 +15,8 @@ def get_font_paths(font, color):
     base_path = Path('Assets') / 'Fonts' / f'Font-{font}' / f'Font-{font}-{color}'
     return [base_path / folder for folder in ['Letters', 'Numbers', 'Symbols']]
 
-<<<<<<< HEAD
 character_image_cache = {}
 
-=======
->>>>>>> 4bbe5e0f61834485180820a80a05c1231f2c3b26
 def get_character_image_path(character, font_paths):
     CHARACTERS_FOLDER, NUMBERS_FOLDER, SYMBOLS_FOLDER = font_paths
 
@@ -35,7 +32,6 @@ def get_character_image_path(character, font_paths):
 
     return character_image_path if character_image_path.is_file() else None
 
-<<<<<<< HEAD
 def get_character_image(character, font_paths):
     if character in character_image_cache:
         return character_image_cache[character]
@@ -55,34 +51,18 @@ def get_character_image(character, font_paths):
 def create_character_image(character, _):
     if character.isspace():
         return Image.new("RGBA", (SPACE_WIDTH, 1), (0, 0, 0, 0))
-=======
-def create_character_image(character, font_paths):
-    if character.isspace():
-        return Image.new("RGBA", (SPACE_WIDTH, 1), (0, 0, 0, 0))
-
-    character_image_path = get_character_image_path(character, font_paths)
-    if not character_image_path or not character_image_path.is_file():
-        raise FileNotFoundError(f"Error: Image not found for character '{character}'")
-
-    return Image.open(character_image_path).convert("RGBA")
->>>>>>> 4bbe5e0f61834485180820a80a05c1231f2c3b26
 
 def calculate_total_width_and_max_height(text, font_paths):
     total_width = 0
     max_height = 0
 
     for character in text:
-<<<<<<< HEAD
         character_image = get_character_image(character, font_paths)
-=======
-        character_image = create_character_image(character, font_paths)
->>>>>>> 4bbe5e0f61834485180820a80a05c1231f2c3b26
         max_height = max(max_height, character_image.height)
         total_width += character_image.width
 
     return total_width, max_height
 
-<<<<<<< HEAD
 def paste_character_images_to_final_image(text, font_paths, total_width, max_height):
     x_position = 0
     final_image = Image.new("RGBA", (total_width, max_height), (0, 0, 0, 0))
@@ -101,22 +81,4 @@ def generate_image(text, filename, font_paths):
     image_path = Path(DESKTOP_PATH) / filename
     final_image.save(image_path)
 
-=======
-def paste_character_images_to_final_image(text, character_images, final_image):
-    x_position = 0
-
-    for character in text:
-        final_image.paste(character_images[character], (x_position, 0))
-        x_position += character_images[character].width
-
-def generate_image(text, filename, font_paths):
-    image_path = Path(DESKTOP_PATH) / filename
-    total_width, max_height = calculate_total_width_and_max_height(text, font_paths)
-    character_images = {character: create_character_image(character, font_paths) for character in text}
-    final_image = Image.new("RGBA", (total_width, max_height), (0, 0, 0, 0))
-
-    paste_character_images_to_final_image(text, character_images, final_image)
-    final_image.save(image_path)
-
->>>>>>> 4bbe5e0f61834485180820a80a05c1231f2c3b26
     return str(image_path), None
