@@ -37,7 +37,11 @@ QComboBox:hover {
 }
 
 QComboBox:pressed {
+<<<<<<< HEAD
     border: 2px solid #D50000;
+=======
+    border: 2px solid #8b1515;
+>>>>>>> 4bbe5e0f61834485180820a80a05c1231f2c3b26
 }
 
 QComboBox QAbstractItemView {
