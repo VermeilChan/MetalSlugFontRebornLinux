@@ -1,44 +1,36 @@
-from PyQt6.QtGui import (
-    QIcon,
-    QMovie,
-)
+from platform import system, version, release, architecture
 
-from PyQt6.QtCore import (
-    Qt, 
-    QUrl,
-)
-
-from PyQt6.QtGui import (
-    QDesktopServices,
-)
-
+from PyQt6.QtGui import QIcon, QPixmap
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
+    QHBoxLayout,
     QVBoxLayout,
-    QSizePolicy,
     QPushButton,
     QLineEdit,
+    QGroupBox,
     QComboBox,
     QWidget,
     QDialog,
     QLabel,
-    QTabWidget,
-    QTextEdit,
 )
 
 from main import generate_filename, generate_image, get_font_paths
 
-from constants import VALID_COLORS_BY_FONT
-
-from theme import dark_theme
+VALID_COLORS_BY_FONT = {
+    1: ["Blue", "Orange-1", "Orange-2"],
+    2: ["Blue", "Orange-1", "Orange-2"],
+    3: ["Blue", "Orange-1"],
+    4: ["Blue", "Orange-1", "Yellow"],
+    5: ["Orange-1"]
+}
 
 class InfoPopup(QDialog):
-    def __init__(self, title, message, icon_path):
+    def __init__(self, title, message, ICON_PATH):
         super().__init__()
 
         self.setWindowTitle(title)
-        self.setWindowIcon(QIcon(icon_path))
+        self.setWindowIcon(QIcon(ICON_PATH))
 
         layout = QVBoxLayout()
 
@@ -50,15 +42,16 @@ class InfoPopup(QDialog):
         layout.addWidget(ok_button)
 
         self.setLayout(layout)
-        self.setStyleSheet(dark_theme)
 
 class ImageGenerator:
+    ICON_PATH = "Assets/Icons/Raubtier.ico"
+
     @staticmethod
     def generate_and_display_image(text, font, color):
         try:
             if not text.strip():
-                error_message = "Input text is empty. Please enter some text."
-                InfoPopup("Error", error_message, "Assets/Icons/Raubtier.ico").exec()
+                error_message = "\nInput text is empty. Please enter some text.\n"
+                InfoPopup("Error", error_message, ImageGenerator.ICON_PATH).exec()
                 return
 
             filename = generate_filename(text)
@@ -68,17 +61,14 @@ class ImageGenerator:
 
             if error_message_generate:
                 error_message = f"Error: {error_message_generate}"
-                InfoPopup("Error", error_message, "Assets/Icons/Raubtier.ico").exec()
+                InfoPopup("Error", error_message, ImageGenerator.ICON_PATH).exec()
             else:
                 success_message = f"Image saved as: \n{img_path}"
-                InfoPopup("Success", success_message, "Assets/Icons/Raubtier.ico").exec()
+                InfoPopup("Success", success_message, ImageGenerator.ICON_PATH).exec()
 
-        except FileNotFoundError as e:
-            error_message_generate = f"Font file not found: {e.filename}"
-            InfoPopup("Error", error_message_generate, "Assets/Icons/Raubtier.ico").exec()
-        except Exception as e:
-            error_message_generate = f"An error occurred: {e}"
-            InfoPopup("Error", error_message_generate, "Assets/Icons/Raubtier.ico").exec()
+        except (FileNotFoundError, Exception) as e:
+            error_message_generate = str(e)
+            InfoPopup("Error", error_message_generate, ImageGenerator.ICON_PATH).exec()
 
 class MetalSlugFontReborn(QMainWindow):
     def __init__(self):
@@ -86,8 +76,7 @@ class MetalSlugFontReborn(QMainWindow):
 
         self.setWindowTitle("MetalSlugFontReborn")
 
-        icon_path = 'Assets/Icons/Raubtier.ico'
-        self.setWindowIcon(QIcon(icon_path))
+        self.setWindowIcon(QIcon(ImageGenerator.ICON_PATH))
 
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
@@ -97,38 +86,27 @@ class MetalSlugFontReborn(QMainWindow):
         layout.addWidget(text_label)
         self.text_entry = QLineEdit()
         self.text_entry.setMinimumWidth(600)
-        self.text_entry.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         layout.addWidget(self.text_entry)
 
         font_label = QLabel("Select Font:")
         layout.addWidget(font_label)
         self.font_combobox = QComboBox()
-        self.font_combobox.addItems(["1", "2", "3", "4", "5"])
-        self.font_combobox.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.font_combobox.addItems(map(str, sorted(VALID_COLORS_BY_FONT.keys())))
         layout.addWidget(self.font_combobox)
 
         color_label = QLabel("Select Color:")
         layout.addWidget(color_label)
         self.color_combobox = QComboBox()
-        self.color_combobox.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         layout.addWidget(self.color_combobox)
 
         generate_button = QPushButton("Generate and Save Image", self)
         generate_button.clicked.connect(self.generate_and_display_image)
-        generate_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         layout.addWidget(generate_button)
-
-        clear_button = QPushButton("Clear", self)
-        clear_button.clicked.connect(self.text_entry.clear)
-        clear_button.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        layout.addWidget(clear_button)
 
         self.color_combobox.setEnabled(False)
         self.font_combobox.currentIndexChanged.connect(self.on_font_change)
 
         self.on_font_change()
-
-        self.setStyleSheet(dark_theme)
 
         menubar = self.menuBar()
         help_menu = menubar.addMenu("Help")
@@ -154,69 +132,59 @@ class MetalSlugFontReborn(QMainWindow):
 
     def show_about_dialog(self):
         about_dialog = QDialog(self)
-        about_dialog.setWindowTitle("About MetalSlugFontReborn")
+        about_dialog.setWindowTitle("About")
 
         layout = QVBoxLayout()
 
+        top_left_layout = QHBoxLayout()
+
         icon_label = QLabel()
-        movie = QMovie("Assets/Icons/Raubtier.gif")
-        icon_label.setMovie(movie)
-        movie.start()
-        icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(icon_label)
+        pixmap = QPixmap("Assets/Icons/Raubtier.png")
+        icon_label.setPixmap(pixmap)
+        top_left_layout.addWidget(icon_label)
 
-        program_name_label = QLabel("<h1>MetalSlugFontReborn</h1>\n")
-        program_name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(program_name_label)
+        metadata_layout = QVBoxLayout()
+        metadata_layout.addWidget(QLabel("MetalSlugFontReborn (64-bit)"))
+        metadata_layout.addWidget(QLabel("GPL-3.0 License"))
 
-        version_label = QLabel("Version 0.6.5\n")
-        version_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(version_label)
+        github_link_label = QLabel('<a href="https://github.com/VermeilChan/MetalSlugFontReborn">GitHub Repository</a>')
+        github_link_label.setOpenExternalLinks(True)
+        metadata_layout.addWidget(github_link_label)
 
-        author_label = QLabel("Developed by: VermeilChan\n")
-        author_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(author_label)
+        top_left_layout.addLayout(metadata_layout)
+        layout.addLayout(top_left_layout)
 
-        description_label = QLabel("A tool for creating images with the Metal Slug font.\n")
-        description_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(description_label)
+        build_info_box = QGroupBox("Build Information")
+        build_info_layout = QVBoxLayout()
 
-        license_label = QLabel("License: GPL-3.0 License\n")
-        license_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(license_label)
+        build_info_layout.addWidget(QLabel("Version: 1.6.7 (a93a5b6)"))
+        build_info_layout.addWidget(QLabel("Pyinstaller: 6.3.0"))
+        build_info_layout.addWidget(QLabel("PyQt6: 6.6.1"))
+        build_info_layout.addWidget(QLabel("Build date: Jan 27 2024"))
 
-        credits_label = QLabel(
-            "Special thanks to <br>"
-            "<a href='https://www.snk-corp.co.jp'>SNK Corporation</a> <br>"
-            "<a href='https://github.com/SikroxMemer'>SikroxMemer</a> <br>"
-            "<a href='https://6th-divisions-den.com/'>Division 六</a> <br>"
-            "<a href='https://www.spriters-resource.com/submitter/Gussprint/'>GussPrint</a> <br>"
-            "<a href='https://discord.com/users/477459550904254464/'>BinRich</a> <br>"
-            "<a href='https://pyinstaller.org/en/stable/'>PyInstaller</a> <br>"
-            "<a href='https://www.riverbankcomputing.com'>PyQt6</a> <br>"
-            "<a href='https://upx.github.io'>UPX</a> <br>"
-            "<a href='https://python-pillow.org/'>Pillow</a>\n"
-        )
-        credits_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        credits_label.setOpenExternalLinks(True)
-        layout.addWidget(credits_label)
+        os_info_box = QGroupBox("Operating System")
+        os_info_layout = QVBoxLayout()
 
-        release_date_label = QLabel("\nRelease: November 27, 2023\n")
-        release_date_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(release_date_label)
+        os_name = system()
+        os_version = version()
+        os_release = release()
+        os_architecture = architecture()[0]
 
-        github_button = QPushButton("GitHub Repository")
-        github_button.clicked.connect(self.open_github_repository)
-        layout.addWidget(github_button)
+        os_info_layout.addWidget(QLabel(f"OS: {os_name} {os_release} ({os_architecture})"))
+        os_info_layout.addWidget(QLabel(f"Version: {os_version}"))
+
+        os_info_box.setLayout(os_info_layout)
+        layout.addWidget(os_info_box)
+
+        build_info_box.setLayout(build_info_layout)
+        layout.addWidget(build_info_box)
 
         about_dialog.setLayout(layout)
         about_dialog.exec()
 
-    def open_github_repository(self):
-        QDesktopServices.openUrl(QUrl("https://github.com/VermeilChan/MetalSlugFontReborn"))
-
 def main():
     app = QApplication([])
+    app.setStyle('Fusion')
     window = MetalSlugFontReborn()
     window.show()
     app.exec()

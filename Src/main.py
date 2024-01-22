@@ -1,21 +1,19 @@
-import string
-import secrets
 from pathlib import Path
-
+from secrets import choice
+from string import ascii_letters, digits
 from PIL import Image
+from constants import SPECIAL_CHARACTERS
 
-from constants import SPACE_WIDTH, DESKTOP_PATH, SPECIAL_CHARACTERS
+SPACE_WIDTH = 30
+DESKTOP_PATH = Path.home() / 'Desktop'
 
 def generate_filename(_):
-    random_chars = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(15))
-    filename = f"{random_chars}.png"
-    return filename
+    random_characters = ''.join(choice(ascii_letters + digits) for _ in range(15))
+    return f"{random_characters}.png"
 
 def get_font_paths(font, color):
     base_path = Path('Assets') / 'Fonts' / f'Font-{font}' / f'Font-{font}-{color}'
     return [base_path / folder for folder in ['Letters', 'Numbers', 'Symbols']]
-
-character_image_cache = {}
 
 def get_character_image_path(character, font_paths):
     CHARACTERS_FOLDER, NUMBERS_FOLDER, SYMBOLS_FOLDER = font_paths
@@ -32,20 +30,15 @@ def get_character_image_path(character, font_paths):
 
     return character_image_path if character_image_path.is_file() else None
 
-def get_character_image(character, font_paths):
-    if character in character_image_cache:
-        return character_image_cache[character]
-
+def get_or_create_character_image(character, font_paths):
     if character.isspace():
         return create_character_image(character, font_paths)
 
     character_image_path = get_character_image_path(character, font_paths)
-    if not character_image_path or not character_image_path.is_file():
-        raise FileNotFoundError(f"Image not found for character '{character}'")
+    if character_image_path is None or not character_image_path.is_file():
+        raise FileNotFoundError(f"Unsupported character '{character}'")
 
     image = Image.open(character_image_path).convert("RGBA")
-    character_image_cache[character] = image
-
     return image
 
 def create_character_image(character, _):
@@ -57,7 +50,7 @@ def calculate_total_width_and_max_height(text, font_paths):
     max_height = 0
 
     for character in text:
-        character_image = get_character_image(character, font_paths)
+        character_image = get_or_create_character_image(character, font_paths)
         max_height = max(max_height, character_image.height)
         total_width += character_image.width
 
@@ -68,8 +61,11 @@ def paste_character_images_to_final_image(text, font_paths, total_width, max_hei
     final_image = Image.new("RGBA", (total_width, max_height), (0, 0, 0, 0))
 
     for character in text:
-        character_image = get_character_image(character, font_paths)
-        final_image.paste(character_image, (x_position, 0))
+        character_image = get_or_create_character_image(character, font_paths)
+        y_position = max_height - character_image.height
+
+        final_image = Image.alpha_composite(final_image, Image.new("RGBA", final_image.size, (0, 0, 0, 0)))
+        final_image.paste(character_image, (x_position, y_position))
         x_position += character_image.width
 
     return final_image
