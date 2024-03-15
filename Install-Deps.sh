@@ -1,6 +1,5 @@
 #!/bin/bash
 
-echo "Welcome to the MetalSlugFontReborn Setup Script."
 echo "This script will download the required dependencies to use MetalSlugFontReborn."
 
 read -p "Do you want to continue with the setup? (y/n): " install_dependencies

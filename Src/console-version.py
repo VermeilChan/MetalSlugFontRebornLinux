@@ -10,7 +10,7 @@ VALID_COLORS_BY_FONT = {
 }
 
 def display_intro_message():
-    print("\nMetalSlugFontReborn")
+    print("\nMetalSlugFontReborn v1.6.11")
     print("You can check the supported characters in SUPPORTED.txt.")
     print("Type 'exit' to close the program.")
 
